@@ -22,9 +22,9 @@ import { listProjects } from "@/app/lib/mikeApi";
 import type { MikeProject } from "@/app/components/shared/types";
 
 const NAV_ITEMS = [
-    { href: "/assistant", label: "Assistant", icon: MessageSquare },
-    { href: "/projects", label: "Projects", icon: FolderOpen },
-    { href: "/tabular-reviews", label: "Tabular Review", icon: Table2 },
+    { href: "/assistant", label: "Asistente", icon: MessageSquare },
+    { href: "/projects", label: "Casos", icon: FolderOpen },
+    { href: "/tabular-reviews", label: "Revisión Tabular", icon: Table2 },
     { href: "/workflows", label: "Workflows", icon: Library },
 ];
 

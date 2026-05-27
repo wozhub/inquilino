@@ -84,7 +84,7 @@ export function InitialView({ onSubmit }: InitialViewProps) {
 
                     <div className="text-center">
                         <p className="text-xs py-3 mb-3 text-gray-500">
-                            AI can make mistakes. Answers are not legal advice.
+                            La IA puede cometer errores. Las respuestas no constituyen asesoramiento legal.
                         </p>
                     </div>
                 </div>
