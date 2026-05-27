@@ -14,6 +14,31 @@ function getClient(): Legalize | null {
 }
 
 // ---------------------------------------------------------------------------
+// Monthly rate counter (resets on 1st of each month)
+// ---------------------------------------------------------------------------
+
+const MONTHLY_LIMIT = parseInt(process.env.LEGALIZE_MONTHLY_LIMIT ?? "4500", 10);
+let _monthlyCount = 0;
+let _currentMonth = new Date().getMonth();
+
+function checkRateLimit(): boolean {
+    const now = new Date();
+    if (now.getMonth() !== _currentMonth) {
+        _currentMonth = now.getMonth();
+        _monthlyCount = 0;
+    }
+    if (_monthlyCount >= MONTHLY_LIMIT) {
+        console.warn("[legalize] monthly rate limit reached:", _monthlyCount);
+        return false;
+    }
+    return true;
+}
+
+function incrementCounter(): void {
+    _monthlyCount++;
+}
+
+// ---------------------------------------------------------------------------
 // In-memory cache (24h TTL)
 // ---------------------------------------------------------------------------
 
@@ -65,16 +90,17 @@ export interface LawContent {
 
 /**
  * Full-text search for Argentine laws. Returns metadata (no content).
- * Results are NOT cached — searches are cheap and may vary.
+ * Respects monthly rate limit. Returns empty on limit breach.
  */
 export async function searchLaws(
     query: string,
     options?: { perPage?: number },
 ): Promise<LawSearchHit[]> {
     const client = getClient();
-    if (!client) return [];
+    if (!client || !checkRateLimit()) return [];
 
     try {
+        incrementCounter();
         const result = await client.laws.search("ar", query, {
             perPage: options?.perPage ?? 5,
         });
@@ -92,6 +118,7 @@ export async function searchLaws(
 
 /**
  * Fetch full markdown content for a law. Cached for 24h.
+ * Respects monthly rate limit. Returns null on limit breach.
  */
 export async function getLawContent(lawId: string): Promise<LawContent | null> {
     const cacheKey = `law:ar:${lawId}`;
@@ -99,9 +126,10 @@ export async function getLawContent(lawId: string): Promise<LawContent | null> {
     if (cached) return cached;
 
     const client = getClient();
-    if (!client) return null;
+    if (!client || !checkRateLimit()) return null;
 
     try {
+        incrementCounter();
         const detail = await client.laws.retrieve("ar", lawId);
         const result: LawContent = {
             id: detail.id,
