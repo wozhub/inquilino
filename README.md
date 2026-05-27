@@ -1,8 +1,8 @@
-# Mike
+# Inquilino
 
-Mike is a legal document assistant with a Next.js frontend, an Express backend, Supabase Auth/Postgres, and Cloudflare R2-compatible object storage.
+Revisión de contratos de alquiler y gastos con IA contra la legislación argentina vigente.
 
-Website: [mikeoss.com](https://mikeoss.com)
+Based on [Mike](https://github.com/willchen96/mike) (AGPL-3.0).
 
 ## Contents
 
@@ -55,7 +55,7 @@ SUPABASE_SECRET_KEY=your-supabase-service-role-key
 R2_ENDPOINT_URL=https://your-account-id.r2.cloudflarestorage.com
 R2_ACCESS_KEY_ID=your-r2-access-key
 R2_SECRET_ACCESS_KEY=your-r2-secret-key
-R2_BUCKET_NAME=mike
+R2_BUCKET_NAME=inquilino
 
 GEMINI_API_KEY=your-gemini-key
 ANTHROPIC_API_KEY=your-anthropic-key
@@ -109,7 +109,7 @@ Open `http://localhost:3000`.
 
 ## Troubleshooting
 
-**Sign-up confirmation email never arrives.** Confirmation emails are sent by Supabase Auth, not by Mike. For local development, the simplest fix is to disable email confirmation in **Supabase > Authentication > Providers > Email**. For production, configure custom SMTP in Supabase; the built-in mailer is heavily rate-limited and may be restricted on newer projects.
+**Sign-up confirmation email never arrives.** Confirmation emails are sent by Supabase Auth, not by Inquilino. For local development, the simplest fix is to disable email confirmation in **Supabase > Authentication > Providers > Email**. For production, configure custom SMTP in Supabase; the built-in mailer is heavily rate-limited and may be restricted on newer projects.
 
 **The model picker shows a missing-key warning.** Add a key for that provider in **Account > Models & API Keys**, or configure the provider key in `backend/.env` and restart the backend.
 

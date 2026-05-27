@@ -15,10 +15,9 @@ const ebGaramond = EB_Garamond({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://app.mikeoss.com"),
-    title: "Mike - AI Legal Platform",
+    title: "Inquilino - Revisión de Contratos con IA",
     description:
-        "AI-powered legal document analysis and contract review platform.",
+        "Revisión de contratos de alquiler y gastos contra la legislación argentina vigente.",
     icons: {
         icon: [
             { url: "/icon.svg", type: "image/svg+xml" },
@@ -28,26 +27,16 @@ export const metadata: Metadata = {
     },
     openGraph: {
         type: "website",
-        url: "https://app.mikeoss.com",
-        siteName: "Mike",
-        title: "Mike - AI Legal Platform",
+        siteName: "Inquilino",
+        title: "Inquilino - Revisión de Contratos con IA",
         description:
-            "AI-powered legal document analysis and contract review platform.",
-        images: [
-            {
-                url: "/link-image.jpg",
-                width: 1200,
-                height: 651,
-                alt: "Mike",
-            },
-        ],
+            "Revisión de contratos de alquiler y gastos contra la legislación argentina vigente.",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Mike - AI Legal Platform",
+        title: "Inquilino - Revisión de Contratos con IA",
         description:
-            "AI-powered legal document analysis and contract review platform.",
-        images: ["/link-image.jpg"],
+            "Revisión de contratos de alquiler y gastos contra la legislación argentina vigente.",
     },
 };
 
