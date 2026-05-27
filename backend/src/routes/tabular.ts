@@ -24,6 +24,7 @@ import {
     filterAccessibleDocumentIds,
     listAccessibleProjectIds,
 } from "../lib/access";
+import { buildLegalContext } from "../lib/legalContext";
 
 function formatPromptSuffix(format?: string, tags?: string[]): string {
     switch (format) {
@@ -1151,6 +1152,7 @@ function buildTabularMessages(
     messages: ChatMessage[],
     tabularStore: TabularCellStore,
     reviewTitle: string,
+    legalContext?: string,
 ): unknown[] {
     const docList = tabularStore.documents
         .map((d, i) => `- ROW:${i} "${d.filename}"`)
@@ -1159,7 +1161,7 @@ function buildTabularMessages(
         .map((c, i) => `- COL:${i} "${c.name}"`)
         .join("\n");
 
-    const systemContent = `You are Mike, an AI legal assistant. You are helping with the tabular review titled "${reviewTitle}".
+    let systemContent = `You are Inquilino, an AI legal assistant specializing in Argentine rent contracts and expense compliance. You are helping with the tabular review titled "${reviewTitle}".
 
 The review extracts specific fields from multiple legal documents into a structured table.
 You do NOT have the cell content yet — call read_table_cells to fetch the cells you need before answering.
@@ -1189,6 +1191,10 @@ Rules:
 - Omit <CITATIONS> if you make no citations
 - Do not fabricate cell content
 - Answer in clear, concise prose. You may use markdown formatting.`;
+
+    if (legalContext) {
+        systemContent += `\n\n${legalContext}`;
+    }
 
     const formatted: unknown[] = [{ role: "system", content: systemContent }];
     for (const msg of messages) {
@@ -1327,10 +1333,12 @@ tabularRouter.post("/:reviewId/chat", requireAuth, async (req, res) => {
         });
     }
 
+    const legalContext = await buildLegalContext("rent_review");
     const apiMessages = buildTabularMessages(
         messages,
         tabularStore,
         review.title || "Untitled Review",
+        legalContext,
     );
 
     res.setHeader("Content-Type", "text/event-stream");

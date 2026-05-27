@@ -13,6 +13,7 @@ import {
 import { completeText } from "../lib/llm";
 import { getUserApiKeys, getUserModelSettings } from "../lib/userSettings";
 import { checkProjectAccess } from "../lib/access";
+import { buildLegalContext, type ReviewIntent } from "../lib/legalContext";
 
 export const chatRouter = Router();
 
@@ -88,6 +89,17 @@ function parseOptionalModel(value: unknown):
         return { ok: false, detail: "model must be a non-empty string" };
     }
     return { ok: true, model: value.trim() };
+}
+
+function detectIntent(messages: ChatMessage[]): ReviewIntent {
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    const text = (lastUser?.content ?? "").toLowerCase();
+    const workflowTitle = (lastUser?.workflow?.title ?? "").toLowerCase();
+    const combined = `${text} ${workflowTitle}`;
+
+    if (/gasto|expens|categoriz/.test(combined)) return "expense_audit";
+    if (/resumen|summary|extracto/.test(combined)) return "lease_summary";
+    return "rent_review";
 }
 
 async function validateAccessibleProjectId(
@@ -538,7 +550,9 @@ chatRouter.post("/", requireAuth, async (req, res) => {
         db,
         docIndex,
     );
-    const apiMessages = buildMessages(enrichedMessages, docAvailability);
+    const intent = detectIntent(messages);
+    const legalContext = await buildLegalContext(intent);
+    const apiMessages = buildMessages(enrichedMessages, docAvailability, legalContext);
 
     const workflowStore = await buildWorkflowStore(userId, userEmail, db);
 
